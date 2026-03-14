@@ -1,24 +1,20 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { useEffect } from 'react';
+import { TamaguiProvider } from 'tamagui';
+import config from '../src/lib/tamagui/tamagui.config';
+import { useThemeStore } from '../src/shared/store/theme.store';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const theme = useThemeStore((state) => state.theme);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+    <TamaguiProvider config={config} defaultTheme={theme}>
+      <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(menu)" />
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    </TamaguiProvider>
   );
 }

@@ -1,50 +1,433 @@
-# Welcome to your Expo app 👋
+# Jardín Zen - Proyecto Base
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Un proyecto base moderno de React Native + Expo con una arquitectura limpia y escalable.
 
-## Get started
+## Tecnologías del Proyecto
 
-1. Install dependencies
+### Core
+- **Expo SDK 54** - Framework para desarrollar aplicaciones React Native
+- **React Native 0.81** - Framework de desarrollo móvil
+- **TypeScript** - Tipado estático para JavaScript
 
-   ```bash
-   npm install
-   ```
+### Navegación
+- **Expo Router** - Sistema de navegación basado en archivos
+- **React Navigation** - Librería de navegación (dependencia de Expo Router)
 
-2. Start the app
+### Estado Global
+- **Zustand** - Gestión de estado global simple y minimalista
 
-   ```bash
-   npx expo start
-   ```
+### UI y Estilos
+- **React Native StyleSheet** - Sistema de estilos de React Native
+- **React Native Reanimated** - Animaciones de alto rendimiento
+- **React Native SVG** - Soporte para gráficos SVG
 
-In the output, you'll find options to open the app in a
+### Funcionalidades Nativas
+- **Expo AV** - Reproducción de audio y video
+- **Expo Linear Gradient** - Gradientes lineales
+- **Expo Blur** - Efectos de desenfoque
+- **React Native Safe Area Context** - Manejo del área segura del dispositivo
+- **React Native Screens** - Optimización de pantallas nativas
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Arquitectura del Proyecto
 
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+root/
+├── app/                          # Rutas de Expo Router
+│   ├── _layout.tsx               # Layout raíz
+│   ├── (auth)/                   # Grupo de rutas de autenticación
+│   │   ├── _layout.tsx
+│   │   └── login.tsx
+│   └── (menu)/                   # Grupo de rutas del menú principal
+│       ├── _layout.tsx
+│       └── home/
+│           └── index.tsx
+│
+├── src/
+│   ├── features/                 # Features específicos del dominio
+│   │   └── auth/
+│   │       ├── components/
+│   │       ├── hooks/
+│   │       ├── services/
+│   │       ├── store/
+│   │       ├── types/
+│   │       └── utils/
+│   │
+│   ├── shared/                   # Código compartido entre features
+│   │   ├── components/
+│   │   │   └── ui/              # Componentes UI reutilizables
+│   │   ├── hooks/
+│   │   ├── store/               # Stores globales (Zustand)
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── constants/
+│   │   └── types/
+│   │
+│   ├── lib/                     # Configuraciones y librerías
+│   │   ├── audio/              # Wrapper de audio
+│   │   └── navigation/         # Utilidades de navegación
+│   │
+│   └── types/                   # Tipos globales
+│
+├── assets/                      # Recursos estáticos
+│   ├── images/
+│   ├── sounds/
+│   └── fonts/
+│
+├── app.json                     # Configuración de Expo
+├── babel.config.js              # Configuración de Babel
+├── metro.config.js              # Configuración de Metro
+├── tsconfig.json                # Configuración de TypeScript
+└── package.json                 # Dependencias del proyecto
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## Explicación de Carpetas
 
-To learn more about developing your project with Expo, look at the following resources:
+### `app/`
+Contiene las rutas de la aplicación usando **Expo Router**. Cada carpeta representa una ruta en la aplicación. Los grupos de rutas (como `(auth)` y `(menu)`) se usan para organizar rutas relacionadas sin afectar la URL.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### `src/features/`
+Contiene código específico de cada feature o módulo del negocio. Cada feature tiene su propia subcarpeta con:
+- `components/` - Componentes específicos de la feature
+- `hooks/` - Hooks personalizados de la feature
+- `services/` - Servicios/API de la feature
+- `store/` - Estado local de la feature (Zustand)
+- `types/` - Tipos específicos de la feature
+- `utils/` - Utilidades de la feature
 
-## Join the community
+### `src/shared/`
+Contiene código que se comparte entre múltiples features:
+- `components/ui/` - Componentes UI reutilizables (botones, inputs, etc.)
+- `store/` - Stores globales de Zustand
+- `hooks/` - Hooks globales
+- `services/` - Servicios compartidos (API, storage, etc.)
 
-Join our community of developers creating universal apps.
+### `src/lib/`
+Contiene configuraciones de librerías externas:
+- `tamagui/` - Configuración y temas de Tamagui
+- `audio/` - Wrapper para Expo AV
+- `navigation/` - Utilidades de navegación
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### `assets/`
+Recursos estáticos como imágenes, sonidos y fuentes.
+
+---
+
+## Cómo Correr el Proyecto
+
+### Requisitos Previos
+- Node.js 18+ 
+- Bun (gestor de paquetes recomendado) o npm
+- Expo CLI
+
+### Instalación
+
+```bash
+# Instalar dependencias
+bun install
+
+# O con npm
+npm install
+```
+
+### Ejecutar en Desarrollo
+
+```bash
+# Iniciar el servidor de desarrollo
+bun start
+
+# O con expo
+expo start
+
+# Ejecutar en Android
+bun android
+
+# Ejecutar en iOS
+bun ios
+
+# Ejecutar en Web
+bun web
+```
+
+### Construcción
+
+```bash
+# Generar APK de desarrollo (Android)
+bun expo run:android
+
+# Generar bundle de producción
+npx expo export
+```
+
+---
+
+## Cómo Agregar Nuevas Features
+
+### 1. Crear la estructura de la feature
+
+```bash
+mkdir -p src/features/mi-feature/{components,hooks,services,store,types,utils}
+```
+
+### 2. Definir los tipos
+
+En `src/features/mi-feature/types/index.ts`:
+
+```typescript
+export interface MiEntidad {
+  id: string;
+  nombre: string;
+}
+```
+
+### 3. Crear el store (si es necesario)
+
+En `src/features/mi-feature/store/mi-feature.store.ts`:
+
+```typescript
+import { create } from 'zustand';
+
+interface MiFeatureState {
+  entidades: MiEntidad[];
+  cargarEntidades: () => Promise<void>;
+}
+
+export const useMiFeatureStore = create<MiFeatureState>((set) => ({
+  entidades: [],
+  cargarEntidades: async () => {
+    // Lógica para cargar entidades
+  },
+}));
+```
+
+### 4. Crear componentes
+
+En `src/features/mi-feature/components/MiComponente.tsx`:
+
+```typescript
+import { View, Text, StyleSheet } from 'react-native';
+
+export function MiComponente() {
+  return (
+    <View style={styles.container}>
+      <Text>Mi Componente</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+```
+
+### 5. Agregar la ruta
+
+Crear el archivo en `app/(menu)/mi-feature/index.tsx`:
+
+```typescript
+import { View, Text, StyleSheet } from 'react-native';
+import { MiComponente } from '@/features/mi-feature/components/MiComponente';
+
+export default function MiFeatureScreen() {
+  return (
+    <View style={styles.container}>
+      <MiComponente />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
+```
+
+---
+
+## Cómo Funciona Expo Router
+
+Expo Router es un sistema de navegación basado en archivos. Cada archivo en la carpeta `app/` representa una ruta.
+
+### Estructura de Rutas
+
+| Archivo | Ruta |
+|---------|------|
+| `app/index.tsx` | `/` |
+| `app/(auth)/login.tsx` | `/login` |
+| `app/(menu)/home/index.tsx` | `/home` |
+| `app/(menu)/detalle/[id].tsx` | `/detalle/:id` |
+
+### Grupos de Rutas
+
+Los paréntesis en los nombres de carpeta (como `(auth)`) crean grupos de rutas. Esto permite:
+- Organizar código relacionado
+- Compartir layouts entre rutas
+- No afectar la URL
+
+### Layouts
+
+Los archivos `_layout.tsx` definen el layout para un grupo de rutas:
+
+```typescript
+import { Stack } from 'expo-router';
+
+export default function MiLayout() {
+  return (
+    <Stack>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="detalle" />
+    </Stack>
+  );
+}
+```
+
+### Navegación
+
+```typescript
+import { useRouter } from 'expo-router';
+
+const router = useRouter();
+
+// Navegar a una ruta
+router.push('/home');
+
+// Navegar hacia atrás
+router.back();
+
+// Reemplazar la ruta actual
+router.replace('/login');
+```
+
+---
+
+## Cómo Funciona Zustand
+
+Zustand es una librería de gestión de estado simple y minimalista.
+
+### Crear un Store
+
+```typescript
+import { create } from 'zustand';
+
+interface AppState {
+  tema: 'light' | 'dark';
+  toggleTema: () => void;
+}
+
+export const useAppStore = create<AppState>((set) => ({
+  tema: 'light',
+  toggleTema: () => set((state) => ({ 
+    tema: state.tema === 'light' ? 'dark' : 'light' 
+  })),
+}));
+```
+
+### Usar el Store
+
+```typescript
+import { useAppStore } from '@/shared/store/app.store';
+
+function MiComponente() {
+  const tema = useAppStore((state) => state.tema);
+  const toggleTema = useAppStore((state) => state.toggleTema);
+
+  return (
+    <button onPress={toggleTema}>
+      Tema actual: {tema}
+    </button>
+  );
+}
+```
+
+### Beneficios de Zustand
+
+- **Minimalista**: Solo ~1KB
+- **Sin boilerplate**: No need for acciones o reducers
+- **Flexible**: Funciona con componentes de clase y funcionales
+- **Performante**: Actualizaciones selectivas
+- **TypeScript**: Completamente tipado
+
+---
+
+## Cómo Funciona React Native Styles
+
+React Native usa un sistema de estilos basado en objetos JavaScript similar a CSS, pero con algunas diferencias importantes.
+
+### Crear Estilos
+
+```typescript
+import { View, Text, StyleSheet } from 'react-native';
+
+function MiComponente() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Hola</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+});
+```
+
+### Propiedades de Estilo Comunes
+
+- **flex**: Controla cómo se expande el elemento
+- **flexDirection**: 'row' o 'column'
+- **justifyContent**: Alineación en el eje principal
+- **alignItems**: Alineación en el eje secundario
+- **padding/margin**: Espaciado interno/externo
+- **backgroundColor**: Color de fondo
+- **borderRadius**: Radio del borde
+
+### Diferencias con CSS Web
+
+- No hay selectores de clase, siempre usa objetos
+- Nombres en camelCase (backgroundColor, no background-color)
+- Los valores numéricos sin unidades se interpretan como píxeles
+- No existen pseudo-selectores ni media queries (usa useWindowDimensions)
+
+---
+
+## Estructura de Commits
+
+Seguimos el estándar de commits convencionales:
+
+```
+feat: nueva funcionalidad
+fix: corrección de bug
+docs: documentación
+style: cambios de formato
+refactor: refactorización
+test: pruebas
+chore: mantenimiento
+```
+
+Ejemplo:
+```
+feat(auth): agregar validación de email
+fix(login): corregir navegación después del login
+docs(readme): actualizar instrucciones de instalación
+```
+
+---
+
+## Licencia
+
+MIT
