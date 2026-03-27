@@ -47,3 +47,4 @@ export const sounds = [
 ] as const;
 
 export type SoundItem = (typeof sounds)[number];
+export type SoundKey = SoundItem["key"];

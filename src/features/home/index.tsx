@@ -4,11 +4,10 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Image, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { audioPlayer } from "src/lib/audio/audio-player";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
 import { Button, Text, XStack, YStack, useTheme } from "tamagui";
 import { SleepMinutes, SleepTimerModal } from "./components/SleepTimerModal";
-import { sounds } from "./constants/sounds";
+import { SoundKey, sounds } from "./constants/sounds";
 
 export default function HomeScreen() {
 	const router = useRouter();
@@ -18,12 +17,8 @@ export default function HomeScreen() {
 	const [sleepOpen, setSleepOpen] = useState(false);
 	const [sleepMinutes, setSleepMinutes] = useState<SleepMinutes>(20);
 
-	const handleListen = async (uri: string) => {
-		try {
-			await audioPlayer.setVolume(1);
-			await audioPlayer.load(uri);
-			await audioPlayer.play();
-		} catch {}
+	const handleListen = (key: SoundKey) => {
+		router.push(`/(menu)/player/${key}`);
 	};
 
 	return (
@@ -140,7 +135,7 @@ export default function HomeScreen() {
 										pressStyle={{
 											background: isDark ? "$accentHover" : "$primaryHover",
 										}}
-										onPress={() => handleListen(s.uri)}>
+										onPress={() => handleListen(s.key)}>
 										<XStack items="center" gap={8}>
 											<Text color="white" fontSize={14} fontWeight="700">
 												Escuchar
