@@ -34,13 +34,7 @@ export default function WelcomeScreen() {
 				style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}
 				pointerEvents="none"
 			/>
-			<YStack
-				flex={1}
-				justify="center"
-				items="center"
-				px={24}
-				py={48}
-				background="$background">
+			<YStack flex={1} justify="center" items="center" px={24} py={48}>
 				<Button
 					position="absolute"
 					t={48}
@@ -48,11 +42,19 @@ export default function WelcomeScreen() {
 					width={44}
 					height={44}
 					rounded={22}
-					background="rgba(255, 255, 255, 0.1)"
+					backgroundColor="rgba(255, 255, 255, 0.1)"
 					borderWidth={1}
 					borderColor="$border"
-					pressStyle={{ background: "rgba(255, 255, 255, 0.2)" }}
-					icon={<Ionicons name={getThemeIcon()} size={24} color={t.text.val} />}
+					pressStyle={{ backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+					icon={
+						<Ionicons
+							name={getThemeIcon()}
+							size={24}
+							width={24}
+							height={24}
+							color={t.text.val}
+						/>
+					}
 					onPress={toggleTheme}
 					z={10}
 				/>
@@ -77,7 +79,7 @@ export default function WelcomeScreen() {
 						width={64}
 						height={64}
 						rounded={32}
-						background="rgba(0, 0, 0, 0.6)"
+						backgroundColor="#2b2c2cff"
 						borderWidth={2}
 						borderColor="$border"
 						justify="center"
@@ -106,7 +108,7 @@ export default function WelcomeScreen() {
 						text="center"
 						fontStyle="italic"
 						mb={16}>
-						jardín de agua
+						&nbsp;jardín de agua&nbsp;
 					</Text>
 					<Text
 						fontSize={16}
@@ -114,8 +116,8 @@ export default function WelcomeScreen() {
 						text="center"
 						lineHeight={24}
 						maxW={300}>
-						Un espacio romántico, tranquilo y minimalista diseñado para tu
-						bienestar interior.
+						Un espacio tranquilo y minimalista diseñado para tu bienestar
+						interior.
 					</Text>
 				</YStack>
 
@@ -124,7 +126,7 @@ export default function WelcomeScreen() {
 					maxW={320}
 					height={56}
 					rounded={28}
-					background={theme === "dark" ? "$accent" : "$primary"}
+					backgroundColor={theme === "dark" ? "$accent" : "$primary"}
 					pressStyle={{
 						background: theme === "dark" ? "$accentHover" : "$primaryHover",
 					}}

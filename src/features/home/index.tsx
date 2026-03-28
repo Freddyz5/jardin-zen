@@ -43,7 +43,15 @@ export default function HomeScreen() {
 						background="rgba(255,255,255,0.08)"
 						borderWidth={1}
 						borderColor="$border"
-						icon={<Ionicons name="chevron-back" size={22} color={t.text.val} />}
+						icon={
+							<Ionicons
+								name="chevron-back"
+								size={22}
+								width={22}
+								height={22}
+								color={t.text.val}
+							/>
+						}
 						onPress={() => router.back()}
 					/>
 					<Text fontSize={18} fontWeight="700" color="$text">
@@ -56,7 +64,15 @@ export default function HomeScreen() {
 						background="rgba(255,255,255,0.08)"
 						borderWidth={1}
 						borderColor="$border"
-						icon={<Ionicons name="settings" size={20} color={t.text.val} />}
+						icon={
+							<Ionicons
+								name="settings"
+								size={20}
+								width={20}
+								height={20}
+								color={t.text.val}
+							/>
+						}
 						onPress={() => setSleepOpen(true)}
 					/>
 				</XStack>
@@ -107,7 +123,7 @@ export default function HomeScreen() {
 											width={40}
 											height={40}
 											rounded={20}
-											background="rgba(0,0,0,0.35)"
+											backgroundColor="#2b2c2cff"
 											borderWidth={1}
 											borderColor="$border"
 											justify="center"
@@ -148,7 +164,7 @@ export default function HomeScreen() {
 						))}
 					</YStack>
 				</ScrollView>
-				<XStack
+				{/* <XStack
 					position="absolute"
 					l={0}
 					r={0}
@@ -177,7 +193,7 @@ export default function HomeScreen() {
 					</YStack>
 					<Ionicons name="heart" size={22} color={t.textMuted.val} />
 					<Ionicons name="person" size={22} color={t.textMuted.val} />
-				</XStack>
+				</XStack> */}
 				<SleepTimerModal
 					open={sleepOpen}
 					minutes={sleepMinutes}

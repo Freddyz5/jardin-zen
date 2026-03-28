@@ -8,8 +8,8 @@ import { AudioPlayerState, audioPlayer } from "src/lib/audio/audio-player";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
 import { Button, Text, XStack, YStack } from "tamagui";
 import {
-    SleepMinutes,
-    SleepTimerModal,
+	SleepMinutes,
+	SleepTimerModal,
 } from "../home/components/SleepTimerModal";
 import { SoundKey, sounds } from "../home/constants/sounds";
 
@@ -44,14 +44,14 @@ function TapBar({ value, onChange }: TapBarProps) {
 			style={{ flex: 1 }}>
 			<YStack
 				height={6}
-				background="rgba(255,255,255,0.25)"
+				backgroundColor="rgba(255,255,255,0.25)"
 				rounded={999}
 				overflow="hidden"
 				justify="center">
 				<YStack
 					height="100%"
 					width={`${v * 100}%`}
-					background="rgba(255,255,255,0.9)"
+					backgroundColor="rgba(255,255,255,0.9)"
 				/>
 			</YStack>
 			<YStack
@@ -61,7 +61,7 @@ function TapBar({ value, onChange }: TapBarProps) {
 				width={14}
 				height={14}
 				rounded={7}
-				background="rgba(255,255,255,0.95)"
+				backgroundColor="rgba(255,255,255,0.95)"
 			/>
 		</Pressable>
 	);
@@ -176,10 +176,18 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 						width={42}
 						height={42}
 						rounded={21}
-						background="rgba(0,0,0,0.28)"
+						backgroundColor="rgba(0,0,0,0.28)"
 						borderWidth={1}
 						borderColor="rgba(255,255,255,0.18)"
-						icon={<Ionicons name="arrow-back" size={20} color="white" />}
+						icon={
+							<Ionicons
+								name="arrow-back"
+								size={20}
+								width={20}
+								height={20}
+								color="white"
+							/>
+						}
 						onPress={handleBack}
 					/>
 					<YStack items="center" flex={1} px={12}>
@@ -205,13 +213,15 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 						width={42}
 						height={42}
 						rounded={21}
-						background="rgba(0,0,0,0.28)"
+						backgroundColor="rgba(0,0,0,0.28)"
 						borderWidth={1}
 						borderColor="rgba(255,255,255,0.18)"
 						icon={
 							<Ionicons
 								name={liked ? "heart" : "heart-outline"}
 								size={20}
+								width={20}
+								height={20}
 								color="white"
 							/>
 						}
@@ -224,10 +234,10 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 						width={110}
 						height={110}
 						rounded={55}
-						background="rgba(255,255,255,0.18)"
+						backgroundColor="rgba(255,255,255,0.18)"
 						borderWidth={1}
 						borderColor="rgba(255,255,255,0.22)"
-						pressStyle={{ background: "rgba(255,255,255,0.24)" }}
+						pressStyle={{ backgroundColor: "rgba(255,255,255,0.24)" }}
 						icon={
 							<Ionicons
 								name={playerState.isPlaying ? "pause" : "play"}
@@ -274,7 +284,7 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 						<Button
 							height={54}
 							rounded={18}
-							background="rgba(0,0,0,0.28)"
+							backgroundColor="rgba(0,0,0,0.28)"
 							borderWidth={1}
 							borderColor="rgba(255,255,255,0.18)"
 							icon={<Ionicons name="time-outline" size={18} color="white" />}
@@ -287,9 +297,9 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 							flex={1}
 							height={54}
 							rounded={18}
-							background={isDark ? "$accent" : "$primary"}
+							backgroundColor={isDark ? "$accent" : "$primary"}
 							pressStyle={{
-								background: isDark ? "$accentHover" : "$primaryHover",
+								backgroundColor: isDark ? "$accentHover" : "$primaryHover",
 							}}
 							icon={<Ionicons name="leaf" size={18} color="white" />}
 							onPress={() => router.push("/(menu)/home")}>
@@ -299,9 +309,9 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 						</Button>
 					</XStack>
 
-					<XStack
+					{/* <XStack
 						height={62}
-						background="rgba(0,0,0,0.35)"
+						backgroundColor="rgba(0,0,0,0.35)"
 						borderWidth={1}
 						borderColor="rgba(255,255,255,0.14)"
 						rounded={22}
@@ -314,7 +324,7 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 							width={44}
 							height={44}
 							rounded={22}
-							background="rgba(255,255,255,0.16)"
+							backgroundColor="rgba(255,255,255,0.16)"
 							borderWidth={1}
 							borderColor="rgba(255,255,255,0.18)"
 							justify="center"
@@ -322,7 +332,7 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 							<Ionicons name="moon" size={22} color="white" />
 						</YStack>
 						<Ionicons name="person" size={22} color="rgba(255,255,255,0.7)" />
-					</XStack>
+					</XStack> */}
 				</YStack>
 
 				<SleepTimerModal

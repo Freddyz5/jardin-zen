@@ -7,7 +7,7 @@ const config = createTamagui({
 	animations,
 	settings: {
 		...defaultConfig.settings,
-		onlyAllowShorthands: true,
+		onlyAllowShorthands: false,
 	},
 	tokens: {
 		...defaultConfig.tokens,

@@ -2,9 +2,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { useEffect, useRef } from "react";
 import { Modal, Pressable } from "react-native";
-import { Button, Text, XStack, YStack, useTheme } from "tamagui";
 import { audioPlayer } from "src/lib/audio/audio-player";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
+import { Button, Text, XStack, YStack, useTheme } from "tamagui";
 
 export type SleepMinutes = 10 | 20 | 30;
 
@@ -68,7 +68,11 @@ export function SleepTimerModal({
 	}, []);
 
 	return (
-		<Modal transparent visible={open} animationType="fade" onRequestClose={onClose}>
+		<Modal
+			transparent
+			visible={open}
+			animationType="fade"
+			onRequestClose={onClose}>
 			<YStack flex={1} justify="center" items="center" px={24}>
 				<Pressable
 					onPress={onClose}
@@ -96,7 +100,9 @@ export function SleepTimerModal({
 				<YStack
 					width="100%"
 					maxW={360}
-					background={isDark ? "rgba(36,59,68,0.96)" : "rgba(255,255,255,0.96)"}
+					backgroundColor={
+						isDark ? "rgba(36,59,68,0.96)" : "rgba(255,255,255,0.96)"
+					}
 					rounded={28}
 					p={28}
 					borderWidth={1}
@@ -107,7 +113,7 @@ export function SleepTimerModal({
 							width={54}
 							height={54}
 							rounded={27}
-							background="rgba(255,255,255,0.08)"
+							backgroundColor="rgba(255,255,255,0.08)"
 							borderWidth={1}
 							borderColor="$border"
 							justify="center"
@@ -117,7 +123,11 @@ export function SleepTimerModal({
 						<Text fontSize={22} fontWeight="800" color="$text" text="center">
 							Temporizador de Sueño
 						</Text>
-						<Text fontSize={13} color="$textSecondary" text="center" lineHeight={18}>
+						<Text
+							fontSize={13}
+							color="$textSecondary"
+							text="center"
+							lineHeight={18}>
 							El sonido se desvanecerá suavemente al finalizar.
 						</Text>
 					</YStack>
@@ -130,11 +140,15 @@ export function SleepTimerModal({
 									width={76}
 									height={76}
 									rounded={38}
-									background={selected ? "rgba(255,255,255,0.06)" : "transparent"}
+									backgroundColor={
+										selected ? "rgba(255,255,255,0.06)" : "transparent"
+									}
 									borderWidth={2}
-									borderColor={selected ? (isDark ? "$accent" : "$primary") : "$border"}
+									borderColor={
+										selected ? (isDark ? "$accent" : "$primary") : "$border"
+									}
 									pressStyle={{
-										background: selected
+										backgroundColor: selected
 											? "rgba(255,255,255,0.08)"
 											: "rgba(255,255,255,0.04)",
 									}}
@@ -158,9 +172,11 @@ export function SleepTimerModal({
 					<Button
 						height={50}
 						rounded={25}
-						background={isDark ? "rgba(122, 154, 168, 0.55)" : "rgba(92, 141, 158, 0.85)"}
+						backgroundColor={
+							isDark ? "rgba(122, 154, 168, 0.55)" : "rgba(92, 141, 158, 0.85)"
+						}
 						pressStyle={{
-							background: isDark
+							backgroundColor: isDark
 								? "rgba(122, 154, 168, 0.7)"
 								: "rgba(92, 141, 158, 0.95)",
 						}}
@@ -175,15 +191,20 @@ export function SleepTimerModal({
 					<Button
 						height={40}
 						rounded={20}
-						background="transparent"
-						pressStyle={{ background: "rgba(255,255,255,0.05)" }}
+						backgroundColor="transparent"
+						pressStyle={{ backgroundColor: "rgba(255,255,255,0.05)" }}
 						onPress={onClose}>
 						<Text color="$textMuted" fontSize={14} fontWeight="700">
 							Cancelar
 						</Text>
 					</Button>
 					<YStack items="center" mt={-4}>
-						<YStack width={44} height={4} rounded={2} background="rgba(255,255,255,0.16)" />
+						<YStack
+							width={44}
+							height={4}
+							rounded={2}
+							backgroundColor="rgba(255,255,255,0.16)"
+						/>
 					</YStack>
 				</YStack>
 			</YStack>
