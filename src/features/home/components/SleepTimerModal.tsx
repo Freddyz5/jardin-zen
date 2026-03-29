@@ -82,7 +82,7 @@ export function SleepTimerModal({
 						right: 0,
 						top: 0,
 						bottom: 0,
-						backgroundColor: "rgba(0,0,0,0.45)",
+						backgroundColor: t.overlay.val,
 					}}
 				/>
 				<BlurView
@@ -101,7 +101,7 @@ export function SleepTimerModal({
 					width="100%"
 					maxW={360}
 					backgroundColor={
-						isDark ? "rgba(36,59,68,0.96)" : "rgba(255,255,255,0.96)"
+						isDark ? "rgba(29,27,32,0.96)" : "rgba(255,255,255,0.96)"
 					}
 					rounded={28}
 					p={28}
@@ -113,7 +113,9 @@ export function SleepTimerModal({
 							width={54}
 							height={54}
 							rounded={27}
-							backgroundColor="rgba(255,255,255,0.08)"
+							backgroundColor={
+								isDark ? "rgba(247,243,245,0.08)" : "rgba(55,63,81,0.06)"
+							}
 							borderWidth={1}
 							borderColor="$border"
 							justify="center"
@@ -141,7 +143,11 @@ export function SleepTimerModal({
 									height={76}
 									rounded={38}
 									backgroundColor={
-										selected ? "rgba(255,255,255,0.06)" : "transparent"
+										selected
+											? isDark
+												? "rgba(247,243,245,0.06)"
+												: "rgba(55,63,81,0.06)"
+											: "transparent"
 									}
 									borderWidth={2}
 									borderColor={
@@ -149,8 +155,12 @@ export function SleepTimerModal({
 									}
 									pressStyle={{
 										backgroundColor: selected
-											? "rgba(255,255,255,0.08)"
-											: "rgba(255,255,255,0.04)",
+											? isDark
+												? "rgba(247,243,245,0.08)"
+												: "rgba(55,63,81,0.08)"
+											: isDark
+												? "rgba(247,243,245,0.04)"
+												: "rgba(55,63,81,0.04)",
 									}}
 									onPress={() => onChangeMinutes(m)}>
 									<YStack items="center" justify="center" gap={2}>
@@ -172,13 +182,9 @@ export function SleepTimerModal({
 					<Button
 						height={50}
 						rounded={25}
-						backgroundColor={
-							isDark ? "rgba(122, 154, 168, 0.55)" : "rgba(92, 141, 158, 0.85)"
-						}
+						backgroundColor={isDark ? "$accent" : "$primary"}
 						pressStyle={{
-							backgroundColor: isDark
-								? "rgba(122, 154, 168, 0.7)"
-								: "rgba(92, 141, 158, 0.95)",
+							backgroundColor: isDark ? "$accentHover" : "$primaryHover",
 						}}
 						onPress={() => {
 							startSleepTimer(minutes);
@@ -192,7 +198,11 @@ export function SleepTimerModal({
 						height={40}
 						rounded={20}
 						backgroundColor="transparent"
-						pressStyle={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+						pressStyle={{
+							backgroundColor: isDark
+								? "rgba(247,243,245,0.06)"
+								: "rgba(55,63,81,0.06)",
+						}}
 						onPress={onClose}>
 						<Text color="$textMuted" fontSize={14} fontWeight="700">
 							Cancelar
@@ -203,7 +213,9 @@ export function SleepTimerModal({
 							width={44}
 							height={4}
 							rounded={2}
-							backgroundColor="rgba(255,255,255,0.16)"
+							backgroundColor={
+								isDark ? "rgba(247,243,245,0.16)" : "rgba(55,63,81,0.16)"
+							}
 						/>
 					</YStack>
 				</YStack>
