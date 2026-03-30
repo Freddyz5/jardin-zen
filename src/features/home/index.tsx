@@ -1,6 +1,6 @@
 import MainSection from "@/src/shared/components/MainSection";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Image, ScrollView } from "react-native";
@@ -82,20 +82,16 @@ export default function HomeScreen() {
 								style={{ width: "100%", height: 160 }}
 								resizeMode="cover"
 							/>
-							<LinearGradient
-								colors={
-									isDark
-										? ["rgba(0,0,0,0)", "rgba(0,0,0,0.6)"]
-										: ["rgba(255,255,255,0)", "rgba(255,255,255,0.8)"]
-								}
-								start={{ x: 0.5, y: 0 }}
-								end={{ x: 0.5, y: 1 }}
+							<BlurView
+								tint={isDark ? "dark" : "light"}
+								intensity={60}
 								style={{
 									position: "absolute",
 									left: 0,
 									right: 0,
 									bottom: 0,
-									height: 90,
+									height: 65,
+									backgroundColor: isDark ? "#0000005d" : "#dddddd5d",
 								}}
 								pointerEvents="none"
 							/>
@@ -111,22 +107,27 @@ export default function HomeScreen() {
 										width={40}
 										height={40}
 										rounded={20}
-										backgroundColor={isDark ? "$accent" : "$primaryHover"}
+										backgroundColor={
+											theme === "dark" ? "#2e292cff" : "#e2d7e2ff"
+										}
 										borderWidth={2}
-										borderColor={isDark ? "$neutral" : "$border"}
+										borderColor="$primaryHover"
 										justify="center"
 										items="center">
 										<Ionicons
 											name={s.icon as any}
 											size={22}
-											color={isDark ? t.neutral.val : t.border.val}
+											color={t.primary.val}
 										/>
 									</YStack>
 									<YStack>
-										<Text fontSize={18} fontWeight="700" color="$text">
+										<Text
+											fontSize={18}
+											fontWeight="700"
+											color={isDark ? "$primary" : "$error"}>
 											{s.title}
 										</Text>
-										<Text fontSize={12} color="$textSecondary">
+										<Text fontSize={12} color={isDark ? "$primary" : "$error"}>
 											{s.subtitle}
 										</Text>
 									</YStack>
@@ -135,13 +136,14 @@ export default function HomeScreen() {
 									height={36}
 									px={16}
 									rounded={18}
-									backgroundColor={isDark ? "$accent" : "$primary"}
+									backgroundColor="$primary"
 									pressStyle={{
-										backgroundColor: isDark ? "$accentHover" : "$primaryHover",
+										backgroundColor: "$primaryHover",
 									}}
+									shadowColor="$primary"
 									onPress={() => handleListen(s.key)}>
 									<XStack items="center" gap={8}>
-										<Text color="white" fontSize={14} fontWeight="700">
+										<Text color="white" fontSize={16} fontWeight="600">
 											Escuchar
 										</Text>
 										<Ionicons name="play" size={16} color="white" />
