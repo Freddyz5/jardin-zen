@@ -1,12 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { useEffect, useRef } from "react";
-import { Modal, Pressable } from "react-native";
+import { useEffect, useState } from "react";
+import { Modal, Pressable, TextInput } from "react-native";
 import { audioPlayer } from "src/lib/audio/audio-player";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
 import { Button, Text, XStack, YStack, useTheme } from "tamagui";
 
-export type SleepMinutes = 10 | 20 | 30;
+export type SleepMinutes = number;
 
 interface SleepTimerModalProps {
 	open: boolean;
@@ -14,6 +14,7 @@ interface SleepTimerModalProps {
 	onChangeMinutes: (minutes: SleepMinutes) => void;
 	onConfirm?: (minutes: SleepMinutes) => void;
 	onClose: () => void;
+	contextId?: string;
 }
 
 export function SleepTimerModal({
@@ -22,53 +23,37 @@ export function SleepTimerModal({
 	onChangeMinutes,
 	onConfirm,
 	onClose,
+	contextId,
 }: SleepTimerModalProps) {
 	const theme = useThemeStore((state: ThemeState) => state.theme);
 	const isDark = theme === "dark";
 	const t = useTheme();
-	const sleepTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	const clearSleepTimer = () => {
-		if (sleepTimeoutRef.current) {
-			clearTimeout(sleepTimeoutRef.current);
-			sleepTimeoutRef.current = null;
-		}
-	};
-
-	const fadeOutAndStop = async () => {
-		try {
-			const baseVolume = audioPlayer.getVolume();
-			const steps = 14;
-			const totalMs = 7000;
-			const stepMs = Math.floor(totalMs / steps);
-
-			for (let i = 0; i <= steps; i += 1) {
-				const volume = baseVolume * (1 - i / steps);
-				await audioPlayer.setVolume(volume);
-				await new Promise((resolve) => setTimeout(resolve, stepMs));
-			}
-
-			await audioPlayer.stop();
-			await audioPlayer.unload();
-			await audioPlayer.setVolume(baseVolume);
-		} catch {}
-	};
-
-	const startSleepTimer = (sleepMinutes: number) => {
-		clearSleepTimer();
-		sleepTimeoutRef.current = setTimeout(
-			() => {
-				void fadeOutAndStop();
-			},
-			sleepMinutes * 60 * 1000,
-		);
-	};
+	const presetMinutes = [5, 10, 15, 20, 30] as const;
+	const [customOpen, setCustomOpen] = useState(false);
+	const [customText, setCustomText] = useState("");
 
 	useEffect(() => {
-		return () => {
-			clearSleepTimer();
-		};
-	}, []);
+		if (!open) return;
+		setCustomOpen(false);
+	}, [open]);
+
+	useEffect(() => {
+		if (!open) return;
+		if (customOpen) return;
+		setCustomText(String(minutes));
+	}, [customOpen, minutes, open]);
+
+	const isPreset = presetMinutes.includes(
+		minutes as (typeof presetMinutes)[number],
+	);
+	const customSelected = !isPreset;
+	const parsedCustom = Math.floor(Number(customText));
+	const customIsValid = Number.isFinite(parsedCustom) && parsedCustom >= 1;
+	const normalizedCustom = customIsValid
+		? Math.min(240, parsedCustom)
+		: minutes;
+	const minutesToConfirm = customOpen ? normalizedCustom : minutes;
+	const confirmEnabled = !customOpen || customIsValid;
 
 	return (
 		<Modal
@@ -103,14 +88,13 @@ export function SleepTimerModal({
 				<YStack
 					width="100%"
 					maxW={360}
-					backgroundColor={
-						isDark ? "rgba(29,27,32,0.96)" : "rgba(255,255,255,0.96)"
-					}
+					backgroundColor="$background"
 					rounded={28}
 					p={28}
-					borderWidth={1}
-					borderColor="$border"
-					gap={18}>
+					borderWidth={2}
+					borderColor="$primaryPressed"
+					gap={18}
+					items="center">
 					<YStack items="center" gap={10}>
 						<YStack
 							width={54}
@@ -136,8 +120,8 @@ export function SleepTimerModal({
 							El sonido se desvanecerá suavemente al finalizar.
 						</Text>
 					</YStack>
-					<XStack justify="center" gap={16} mt={6}>
-						{([10, 20, 30] as const).map((m) => {
+					<XStack justify="center" gap={16} mt={6} flexWrap="wrap" width={280}>
+						{presetMinutes.map((m) => {
 							const selected = minutes === m;
 							return (
 								<Button
@@ -145,35 +129,21 @@ export function SleepTimerModal({
 									width={76}
 									height={76}
 									rounded={38}
-									backgroundColor={
-										selected
-											? isDark
-												? "rgba(247,243,245,0.06)"
-												: "rgba(55,63,81,0.06)"
-											: "transparent"
-									}
+									backgroundColor="transparent"
 									borderWidth={2}
-									borderColor={
-										selected ? (isDark ? "$accent" : "$primary") : "$border"
-									}
-									pressStyle={{
-										backgroundColor: selected
-											? isDark
-												? "rgba(247,243,245,0.08)"
-												: "rgba(55,63,81,0.08)"
-											: isDark
-												? "rgba(247,243,245,0.04)"
-												: "rgba(55,63,81,0.04)",
-									}}
+									borderColor={selected ? "$primary" : "$textMuted"}
 									onPress={() => onChangeMinutes(m)}>
 									<YStack items="center" justify="center" gap={2}>
-										<Text fontSize={18} fontWeight="800" color="$text">
+										<Text
+											fontSize={18}
+											fontWeight="800"
+											color={selected ? "$primary" : "$textMuted"}>
 											{m}
 										</Text>
 										<Text
 											fontSize={10}
 											fontWeight="700"
-											color="$textMuted"
+											color={selected ? "$primary" : "$textMuted"}
 											letterSpacing={1}>
 											MIN
 										</Text>
@@ -181,17 +151,83 @@ export function SleepTimerModal({
 								</Button>
 							);
 						})}
+						<Button
+							width={76}
+							height={76}
+							rounded={38}
+							backgroundColor="transparent"
+							borderWidth={2}
+							borderColor={customSelected ? "$primary" : "$textMuted"}
+							onPress={() => {
+								setCustomOpen(true);
+								setCustomText(customSelected ? String(minutes) : "");
+							}}>
+							<YStack items="center" justify="center" gap={2}>
+								<Text
+									fontSize={18}
+									fontWeight="800"
+									color={customSelected ? "$primary" : "$textMuted"}>
+									{customSelected ? minutes : "..."}
+								</Text>
+								<Text
+									fontSize={10}
+									text="center"
+									width="100%"
+									fontWeight="700"
+									color={customSelected ? "$primary" : "$textMuted"}
+									letterSpacing={1}>
+									{customSelected ? "MIN" : "CUSTOM"}
+								</Text>
+							</YStack>
+						</Button>
 					</XStack>
+					{customOpen ? (
+						<YStack gap={8}>
+							<Text fontSize={13} color="$textSecondary" text="center">
+								Minutos personalizados (1–240)
+							</Text>
+							<TextInput
+								value={customText}
+								onChangeText={(value) => {
+									const next = value.replace(/[^\d]/g, "");
+									setCustomText(next);
+									const nextParsed = Math.floor(Number(next));
+									if (Number.isFinite(nextParsed) && nextParsed >= 1) {
+										onChangeMinutes(Math.min(240, nextParsed));
+									}
+								}}
+								keyboardType="number-pad"
+								placeholder="Ej: 45"
+								placeholderTextColor={t.textMuted.val}
+								style={{
+									height: 44,
+									borderRadius: 12,
+									paddingHorizontal: 12,
+									borderWidth: 1,
+									borderColor: t.border.val,
+									color: t.text.val,
+									backgroundColor: isDark
+										? "rgba(247,243,245,0.06)"
+										: "rgba(55,63,81,0.06)",
+									textAlign: "center",
+									fontSize: 16,
+									fontWeight: "700",
+								}}
+							/>
+						</YStack>
+					) : null}
 					<Button
+						width="100%"
 						height={50}
 						rounded={25}
-						backgroundColor={isDark ? "$accent" : "$primary"}
+						backgroundColor="$primary"
 						pressStyle={{
-							backgroundColor: isDark ? "$accentHover" : "$primaryHover",
+							backgroundColor: "$primaryHover",
 						}}
+						disabled={!confirmEnabled}
 						onPress={() => {
-							startSleepTimer(minutes);
-							onConfirm?.(minutes);
+							audioPlayer.setSleepTimer(minutesToConfirm, contextId);
+							onConfirm?.(minutesToConfirm);
 							onClose();
 						}}>
 						<Text color="white" fontSize={16} fontWeight="800">
@@ -199,29 +235,17 @@ export function SleepTimerModal({
 						</Text>
 					</Button>
 					<Button
+						width="100%"
 						height={40}
 						rounded={20}
-						backgroundColor="transparent"
-						pressStyle={{
-							backgroundColor: isDark
-								? "rgba(247,243,245,0.06)"
-								: "rgba(55,63,81,0.06)",
-						}}
+						backgroundColor="$background"
+						borderWidth={1}
+						borderColor="$border"
 						onPress={onClose}>
-						<Text color="$textMuted" fontSize={14} fontWeight="700">
+						<Text color="white" fontSize={14} fontWeight="700">
 							Cancelar
 						</Text>
 					</Button>
-					<YStack items="center" mt={-4}>
-						<YStack
-							width={44}
-							height={4}
-							rounded={2}
-							backgroundColor={
-								isDark ? "rgba(247,243,245,0.16)" : "rgba(55,63,81,0.16)"
-							}
-						/>
-					</YStack>
 				</YStack>
 			</YStack>
 		</Modal>

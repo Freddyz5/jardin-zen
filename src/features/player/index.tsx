@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { audioPlayer, AudioPlayerState } from "src/lib/audio/audio-player";
+import { SoundKey, sounds } from "src/shared/constants/sounds";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
 import { Button, Text, useTheme, XStack, YStack } from "tamagui";
-import { SoundKey, sounds } from "../../shared/constants/sounds";
+import ProgressRing from "./components/ProgressRing";
 import { SleepMinutes, SleepTimerModal } from "./components/SleepTimerModal";
 import Waveform from "./components/WaveForm";
 import { clamp01, formatTime } from "./utils/utils";
@@ -38,6 +39,7 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 	const [sleepOpen, setSleepOpen] = useState(false);
 	const [sleepMinutes, setSleepMinutes] = useState<SleepMinutes>(30);
 	const [sleepSelected, setSleepSelected] = useState(false);
+	const [sleepProgress, setSleepProgress] = useState(0);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -49,21 +51,48 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 			}
 
 			try {
-				await audioPlayer.load(sound.source, (state) => {
-					if (!cancelled) setPlayerState(state);
-				});
+				await audioPlayer.load(
+					sound.source,
+					(state) => {
+						if (!cancelled) setPlayerState(state);
+					},
+					{ contextId: sound.key },
+				);
 				await audioPlayer.setVolume(normalizedDefaultVolume);
 				await audioPlayer.playWithFadeIn({ durationMs: 1400, steps: 18 });
 			} catch {}
 		};
 
+		const selected = audioPlayer.getSleepTimerSelection(soundKey);
+		if (typeof selected === "number") setSleepMinutes(selected);
+
 		void start();
 
 		return () => {
 			cancelled = true;
+			audioPlayer.clearSleepTimer();
 			void audioPlayer.unload();
 		};
-	}, [router, sound]);
+	}, [router, sound, soundKey]);
+
+	useEffect(() => {
+		const tick = () => {
+			const state = audioPlayer.getSleepTimerState(soundKey);
+			if (!state.active) {
+				setSleepSelected(false);
+				setSleepProgress(0);
+				return;
+			}
+
+			setSleepSelected(true);
+			setSleepProgress(state.progress);
+			setSleepMinutes(Math.max(1, Math.round(state.durationMs / 60000)));
+		};
+
+		tick();
+		const id = setInterval(tick, 1000);
+		return () => clearInterval(id);
+	}, [soundKey]);
 
 	const progress =
 		playerState.duration > 0 ? playerState.position / playerState.duration : 0;
@@ -85,6 +114,7 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 
 	const handleBack = async () => {
 		try {
+			audioPlayer.clearSleepTimer();
 			await audioPlayer.stop();
 			await audioPlayer.unload();
 		} catch {}
@@ -224,28 +254,46 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 					paddingVertical={40}
 					style={{ backgroundColor: controlsBackground }}>
 					<XStack items="center" justify="space-between">
-						<Button
+						<YStack
 							width={48}
 							height={48}
-							rounded={24}
-							padding={0}
-							backgroundColor={playButtons}
-							pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
-							icon={
-								sleepSelected ? undefined : (
-									<Ionicons name="moon" size={28} color={iconColor} />
-								)
-							}
-							onPress={() => setSleepOpen(true)}>
+							justify="center"
+							items="center"
+							position="relative">
 							{sleepSelected ? (
-								<Text
-									style={{ color: iconColor }}
-									fontSize={12}
-									fontWeight="800">
-									{sleepMinutes}m
-								</Text>
+								<YStack pointerEvents="none" opacity={0.95}>
+									<ProgressRing
+										size={54}
+										strokeWidth={3}
+										progress={sleepProgress}
+										color={iconColor}
+										trackColor={playButtons}
+									/>
+								</YStack>
 							) : null}
-						</Button>
+							<Button
+								width={48}
+								height={48}
+								rounded={24}
+								padding={0}
+								backgroundColor={playButtons}
+								pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
+								icon={
+									sleepSelected ? undefined : (
+										<Ionicons name="moon" size={28} color={iconColor} />
+									)
+								}
+								onPress={() => setSleepOpen(true)}>
+								{sleepSelected ? (
+									<Text
+										style={{ color: iconColor }}
+										fontSize={12}
+										fontWeight="800">
+										{sleepMinutes}m
+									</Text>
+								) : null}
+							</Button>
+						</YStack>
 
 						<Button
 							width={80}
@@ -284,10 +332,15 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 					minutes={sleepMinutes}
 					onChangeMinutes={(minutes) => {
 						setSleepMinutes(minutes);
-						setSleepSelected(true);
+						audioPlayer.setSleepTimerSelection(minutes, soundKey);
 					}}
-					onConfirm={() => setSleepSelected(true)}
+					onConfirm={() => {
+						const state = audioPlayer.getSleepTimerState(soundKey);
+						setSleepSelected(state.active);
+						setSleepProgress(state.progress);
+					}}
 					onClose={() => setSleepOpen(false)}
+					contextId={soundKey}
 				/>
 			</YStack>
 		</SafeAreaView>
