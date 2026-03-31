@@ -6,11 +6,11 @@ import { useState } from "react";
 import { Image, ScrollView } from "react-native";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
 import { Button, Text, XStack, YStack, useTheme } from "tamagui";
+import { SoundKey, sounds } from "../../shared/constants/sounds";
 import {
 	SleepMinutes,
 	SleepTimerModal,
 } from "../player/components/SleepTimerModal";
-import { SoundKey, sounds } from "./constants/sounds";
 
 export default function HomeScreen() {
 	const router = useRouter();

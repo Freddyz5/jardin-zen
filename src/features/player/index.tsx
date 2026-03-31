@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { audioPlayer, AudioPlayerState } from "src/lib/audio/audio-player";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
 import { Button, Text, useTheme, XStack, YStack } from "tamagui";
-import { SoundKey, sounds } from "../home/constants/sounds";
+import { SoundKey, sounds } from "../../shared/constants/sounds";
 import { SleepMinutes, SleepTimerModal } from "./components/SleepTimerModal";
 import Waveform from "./components/WaveForm";
 import { clamp01, formatTime } from "./utils/utils";

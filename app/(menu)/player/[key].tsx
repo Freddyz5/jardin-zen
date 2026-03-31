@@ -1,6 +1,6 @@
 import PlayerScreen from "@/src/features/player";
+import { SoundKey } from "@/src/shared/constants/sounds";
 import { useLocalSearchParams } from "expo-router";
-import { SoundKey } from "@/src/features/home/constants/sounds";
 
 export default function Player() {
 	const { key } = useLocalSearchParams<{ key?: string }>();
