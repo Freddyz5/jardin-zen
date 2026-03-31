@@ -79,7 +79,7 @@ export default function WelcomeScreen() {
 					width={64}
 					height={64}
 					rounded={32}
-					backgroundColor={theme === "dark" ? "#2e292cff" : "#e2d7e2ff"}
+					backgroundColor="$backgroundSecondary"
 					borderWidth={2}
 					borderColor="$primaryHover"
 					justify="center"

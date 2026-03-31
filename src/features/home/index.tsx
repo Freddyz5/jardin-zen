@@ -157,41 +157,12 @@ export default function HomeScreen() {
 					))}
 				</YStack>
 			</ScrollView>
-			{/* <XStack
-				position="absolute"
-				l={0}
-				r={0}
-				b={0}
-				height={64}
-				background="$card"
-				borderTopWidth={1}
-				borderColor="$border"
-				items="center"
-				justify="space-around">
-				<Ionicons name="home" size={22} color={t.textMuted.val} />
-				<YStack
-					width={44}
-					height={44}
-					rounded={22}
-					background="rgba(0,0,0,0.25)"
-					justify="center"
-					items="center"
-					borderWidth={1}
-					borderColor="$border">
-					<Ionicons
-						name="musical-notes"
-						size={22}
-						color={isDark ? t.accent.val : t.primary.val}
-					/>
-				</YStack>
-				<Ionicons name="heart" size={22} color={t.textMuted.val} />
-				<Ionicons name="person" size={22} color={t.textMuted.val} />
-			</XStack> */}
 			<SleepTimerModal
 				open={sleepOpen}
 				minutes={sleepMinutes}
 				onChangeMinutes={setSleepMinutes}
 				onClose={() => setSleepOpen(false)}
+				contextId="global"
 			/>
 		</MainSection>
 	);
