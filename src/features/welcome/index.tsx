@@ -37,11 +37,9 @@ export default function WelcomeScreen() {
 				width={44}
 				height={44}
 				rounded={22}
-				backgroundColor={
-					theme === "dark" ? "rgba(247,243,245,0.10)" : "rgba(55,63,81,0.06)"
-				}
+				backgroundColor={theme === "dark" ? "#232022" : "#F7F3F5"}
 				borderWidth={1}
-				borderColor="$border"
+				borderColor={theme === "dark" ? "$border" : "$text"}
 				pressStyle={{
 					backgroundColor:
 						theme === "dark" ? "rgba(247,243,245,0.16)" : "rgba(55,63,81,0.10)",

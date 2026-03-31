@@ -7,18 +7,14 @@ import { Image, ScrollView } from "react-native";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
 import { Button, Text, XStack, YStack, useTheme } from "tamagui";
 import { SoundKey, sounds } from "../../shared/constants/sounds";
-import {
-	SleepMinutes,
-	SleepTimerModal,
-} from "../player/components/SleepTimerModal";
+import AppSettingsModal from "./components/AppSettingsModal";
 
 export default function HomeScreen() {
 	const router = useRouter();
 	const theme = useThemeStore((state: ThemeState) => state.theme);
 	const t = useTheme();
 	const isDark = theme === "dark";
-	const [sleepOpen, setSleepOpen] = useState(false);
-	const [sleepMinutes, setSleepMinutes] = useState<SleepMinutes>(20);
+	const [settingsOpen, setSettingsOpen] = useState(false);
 
 	const handleListen = (key: SoundKey) => {
 		router.push(`/(menu)/player/${key}`);
@@ -31,9 +27,9 @@ export default function HomeScreen() {
 					width={40}
 					height={40}
 					rounded={20}
-					background={isDark ? "#f7f3f514" : "#3840520f"}
+					backgroundColor={isDark ? "#232022" : "#F7F3F5"}
 					borderWidth={1}
-					borderColor="$border"
+					borderColor={isDark ? "$border" : "$text"}
 					icon={
 						<Ionicons
 							name="chevron-back"
@@ -52,9 +48,9 @@ export default function HomeScreen() {
 					width={40}
 					height={40}
 					rounded={20}
-					background={isDark ? "rgba(247,243,245,0.08)" : "rgba(55,63,81,0.06)"}
+					backgroundColor={isDark ? "#232022" : "#F7F3F5"}
 					borderWidth={1}
-					borderColor="$border"
+					borderColor={isDark ? "$border" : "$text"}
 					icon={
 						<Ionicons
 							name="settings"
@@ -64,7 +60,7 @@ export default function HomeScreen() {
 							color={t.text.val}
 						/>
 					}
-					onPress={() => setSleepOpen(true)}
+					onPress={() => setSettingsOpen(true)}
 				/>
 			</XStack>
 			<ScrollView
@@ -157,12 +153,9 @@ export default function HomeScreen() {
 					))}
 				</YStack>
 			</ScrollView>
-			<SleepTimerModal
-				open={sleepOpen}
-				minutes={sleepMinutes}
-				onChangeMinutes={setSleepMinutes}
-				onClose={() => setSleepOpen(false)}
-				contextId="global"
+			<AppSettingsModal
+				open={settingsOpen}
+				onClose={() => setSettingsOpen(false)}
 			/>
 		</MainSection>
 	);

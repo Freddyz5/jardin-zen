@@ -100,11 +100,9 @@ export function SleepTimerModal({
 							width={54}
 							height={54}
 							rounded={27}
-							backgroundColor={
-								isDark ? "rgba(247,243,245,0.08)" : "rgba(55,63,81,0.06)"
-							}
+							backgroundColor={isDark ? "#363134ff" : "#E2D7E2ff"}
 							borderWidth={1}
-							borderColor="$border"
+							borderColor="$text"
 							justify="center"
 							items="center">
 							<Ionicons name="moon" size={24} color={t.text.val} />
@@ -240,9 +238,12 @@ export function SleepTimerModal({
 						rounded={20}
 						backgroundColor="$background"
 						borderWidth={1}
-						borderColor="$border"
+						borderColor={isDark ? "$border" : "$text"}
 						onPress={onClose}>
-						<Text color="white" fontSize={14} fontWeight="700">
+						<Text
+							color={isDark ? "$border" : "$text"}
+							fontSize={14}
+							fontWeight="800">
 							Cancelar
 						</Text>
 					</Button>
