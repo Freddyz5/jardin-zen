@@ -158,7 +158,8 @@ export default function AppSettingsModal({
 									{appName}
 								</Text>
 								<Text fontSize={12} color="$textSecondary">
-									Esta app fue creada como un pequeño regalo.
+									Esta app fue creada como un pequeño regalo, por Freddy Tacuri
+									con la supervisión de Issac Segarra
 								</Text>
 								<Text fontSize={12} color="$textSecondary">
 									La idea es que siempre tengas un lugar tranquilo donde
