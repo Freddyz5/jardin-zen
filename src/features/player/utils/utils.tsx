@@ -1,0 +1,10 @@
+export function clamp01(value: number) {
+	return Math.max(0, Math.min(1, value));
+}
+
+export function formatTime(ms: number) {
+	const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+	const minutes = Math.floor(totalSeconds / 60);
+	const seconds = totalSeconds % 60;
+	return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}

@@ -1,80 +1,29 @@
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Image, Pressable } from "react-native";
+import { Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AudioPlayerState, audioPlayer } from "src/lib/audio/audio-player";
+import { audioPlayer, AudioPlayerState } from "src/lib/audio/audio-player";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
-import { Button, Text, XStack, YStack } from "tamagui";
+import { Button, Text, useTheme, XStack, YStack } from "tamagui";
 import {
 	SleepMinutes,
 	SleepTimerModal,
 } from "../home/components/SleepTimerModal";
 import { SoundKey, sounds } from "../home/constants/sounds";
-
-function clamp01(value: number) {
-	return Math.max(0, Math.min(1, value));
-}
-
-function formatTime(ms: number) {
-	const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-	const minutes = Math.floor(totalSeconds / 60);
-	const seconds = totalSeconds % 60;
-	return `${minutes}:${String(seconds).padStart(2, "0")}`;
-}
-
-type TapBarProps = {
-	value: number;
-	onChange: (value: number) => void;
-};
-
-function TapBar({ value, onChange }: TapBarProps) {
-	const [width, setWidth] = useState(0);
-	const v = clamp01(value);
-
-	return (
-		<Pressable
-			onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
-			onPress={(e) => {
-				if (width <= 0) return;
-				const next = clamp01(e.nativeEvent.locationX / width);
-				onChange(next);
-			}}
-			style={{ flex: 1 }}>
-			<YStack
-				height={6}
-				backgroundColor="rgba(255,255,255,0.25)"
-				rounded={999}
-				overflow="hidden"
-				justify="center">
-				<YStack
-					height="100%"
-					width={`${v * 100}%`}
-					backgroundColor="rgba(255,255,255,0.9)"
-				/>
-			</YStack>
-			<YStack
-				position="absolute"
-				l={Math.max(0, width * v - 7)}
-				t={-4}
-				width={14}
-				height={14}
-				rounded={7}
-				backgroundColor="rgba(255,255,255,0.95)"
-			/>
-		</Pressable>
-	);
-}
+import Waveform from "./components/WaveForm";
+import { clamp01, formatTime } from "./utils/utils";
 
 type PlayerScreenProps = {
 	soundKey: SoundKey;
 };
 
 export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
+	const normalizedDefaultVolume = 1;
 	const router = useRouter();
 	const theme = useThemeStore((state: ThemeState) => state.theme);
 	const isDark = theme === "dark";
+	const t = useTheme();
 
 	const sound = useMemo(
 		() => sounds.find((s) => s.key === soundKey),
@@ -87,11 +36,11 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 		position: 0,
 		duration: 0,
 	});
-	const [volume, setVolume] = useState(1);
 	const [liked, setLiked] = useState(false);
 
 	const [sleepOpen, setSleepOpen] = useState(false);
 	const [sleepMinutes, setSleepMinutes] = useState<SleepMinutes>(30);
+	const [sleepSelected, setSleepSelected] = useState(false);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -103,11 +52,11 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 			}
 
 			try {
-				await audioPlayer.setVolume(1);
-				await audioPlayer.load(sound.uri, (state) => {
+				await audioPlayer.load(sound.source, (state) => {
 					if (!cancelled) setPlayerState(state);
 				});
-				await audioPlayer.play();
+				await audioPlayer.setVolume(normalizedDefaultVolume);
+				await audioPlayer.playWithFadeIn({ durationMs: 1400, steps: 18 });
 			} catch {}
 		};
 
@@ -137,14 +86,6 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 		} catch {}
 	};
 
-	const handleChangeVolume = async (next: number) => {
-		try {
-			const v = clamp01(next);
-			setVolume(v);
-			await audioPlayer.setVolume(v);
-		} catch {}
-	};
-
 	const handleBack = async () => {
 		try {
 			await audioPlayer.stop();
@@ -155,190 +96,200 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 
 	if (!sound) return null;
 
+	const palette = (sound as any).palette;
+	const hasPalette =
+		!!palette &&
+		typeof palette.backgroundColor === "string" &&
+		typeof palette.primary === "string" &&
+		typeof palette.iconColor === "string";
+
+	const bgColor = hasPalette
+		? palette.backgroundColor
+		: isDark
+			? "#363134ff"
+			: "#e2d7e2ff";
+	const iconColor = hasPalette ? palette.iconColor : t.text.val;
+	const controlsBackground = hasPalette
+		? iconColor
+		: isDark
+			? "#232022"
+			: "#F7F3F5";
+	const wavePlayed = hasPalette ? palette.primary : t.primary.val;
+	const waveUnplayed = hasPalette ? `${palette.primary}50` : t.textMuted.val;
+	const playButtons = hasPalette ? palette.primary : t.primary.val;
+	const textColor = hasPalette ? "#ffffffe0" : t.text.val;
+	const textMuted = hasPalette ? "#ffffff80" : t.textMuted.val;
+
 	return (
-		<SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: bgColor }} edges={["top"]}>
 			<Image
 				source={{ uri: sound.image }}
-				style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}
+				style={{
+					position: "absolute",
+					left: -2,
+					right: -2,
+					top: -2,
+					bottom: -2,
+					filter: "blur(12px)",
+				}}
 				resizeMode="cover"
 			/>
-			<LinearGradient
-				colors={["rgba(0,0,0,0.0)", "rgba(0,0,0,0.35)", "rgba(0,0,0,0.72)"]}
-				start={{ x: 0.5, y: 0 }}
-				end={{ x: 0.5, y: 1 }}
+			{/* <BlurView
+				intensity={120}
+				tint={isDark ? "dark" : "light"}
 				style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0 }}
-				pointerEvents="none"
-			/>
-
+			/> */}
 			<YStack flex={1}>
-				<XStack px={16} pt={10} items="center" justify="space-between">
+				<XStack px={18} pt={8} items="center" justify="space-between" gap={10}>
 					<Button
-						width={42}
-						height={42}
-						rounded={21}
-						backgroundColor="rgba(0,0,0,0.28)"
-						borderWidth={1}
-						borderColor="rgba(255,255,255,0.18)"
-						icon={
-							<Ionicons
-								name="arrow-back"
-								size={20}
-								width={20}
-								height={20}
-								color="white"
-							/>
-						}
+						width={44}
+						height={44}
+						rounded={22}
+						padding={0}
+						backgroundColor="transparent"
+						pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
+						icon={<Ionicons name="chevron-back" size={30} color={iconColor} />}
 						onPress={handleBack}
 					/>
-					<YStack items="center" flex={1} px={12}>
+					<XStack items="center" gap={6}>
+						<Button
+							width={44}
+							height={44}
+							rounded={22}
+							padding={0}
+							backgroundColor="transparent"
+							pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
+							icon={
+								<Ionicons
+									name={liked ? "heart" : "heart-outline"}
+									size={30}
+									color={iconColor}
+								/>
+							}
+							onPress={() => setLiked((v) => !v)}
+						/>
+					</XStack>
+				</XStack>
+
+				<YStack flex={1} justify="center" items="center" px={22} gap={16}>
+					<Image
+						source={{ uri: sound.image }}
+						style={{
+							width: 290,
+							height: 290,
+							borderRadius: 14,
+							backgroundColor: isDark ? "#2e292cff" : "#f7f3f5da",
+						}}
+						resizeMode="cover"
+					/>
+
+					<YStack items="center" gap={6} mt={6}>
 						<Text
-							fontSize={11}
-							fontWeight="800"
-							letterSpacing={2}
-							color="rgba(255,255,255,0.7)"
-							textTransform="uppercase"
-							text="center">
-							AHORA REPRODUCIENDO
-						</Text>
-						<Text
-							fontSize={22}
-							fontWeight="800"
-							color="white"
+							fontSize={28}
+							fontWeight="900"
+							style={{ color: textColor }}
 							text="center"
 							numberOfLines={1}>
 							{sound.title}
 						</Text>
+						<Text
+							fontSize={15}
+							fontWeight="700"
+							style={{ color: textMuted }}
+							text="center"
+							numberOfLines={1}>
+							{sound.subtitle}
+						</Text>
 					</YStack>
-					<Button
-						width={42}
-						height={42}
-						rounded={21}
-						backgroundColor="rgba(0,0,0,0.28)"
-						borderWidth={1}
-						borderColor="rgba(255,255,255,0.18)"
-						icon={
-							<Ionicons
-								name={liked ? "heart" : "heart-outline"}
-								size={20}
-								width={20}
-								height={20}
-								color="white"
-							/>
-						}
-						onPress={() => setLiked((v) => !v)}
-					/>
-				</XStack>
 
-				<YStack flex={1} justify="center" items="center">
-					<Button
-						width={110}
-						height={110}
-						rounded={55}
-						backgroundColor="rgba(255,255,255,0.18)"
-						borderWidth={1}
-						borderColor="rgba(255,255,255,0.22)"
-						pressStyle={{ backgroundColor: "rgba(255,255,255,0.24)" }}
-						icon={
-							<Ionicons
-								name={playerState.isPlaying ? "pause" : "play"}
-								size={44}
-								color="white"
-							/>
-						}
-						onPress={handleTogglePlay}
-					/>
+					<YStack width="100%" mt={8}>
+						<Waveform
+							seed={sound.key}
+							progress={progress}
+							isPlaying={playerState.isPlaying}
+							onSeek={handleSeek}
+							playedColor={wavePlayed}
+							unplayedColor={waveUnplayed}
+						/>
+						<XStack mt={10} items="center" justify="space-between">
+							<Text fontSize={14} style={{ color: textMuted }}>
+								{formatTime(playerState.position)}
+							</Text>
+							<Text fontSize={14} style={{ color: textMuted }}>
+								{formatTime(playerState.duration)}
+							</Text>
+						</XStack>
+					</YStack>
 				</YStack>
 
-				<YStack px={20} pb={14} gap={14}>
-					<XStack items="center" gap={10}>
-						<Text
-							fontSize={12}
-							color="rgba(255,255,255,0.7)"
-							style={{ width: 42 }}>
-							{formatTime(playerState.position)}
-						</Text>
-						<TapBar value={progress} onChange={handleSeek} />
-						<Text
-							fontSize={12}
-							color="rgba(255,255,255,0.7)"
-							style={{ width: 42 }}
-							text="right">
-							{formatTime(playerState.duration)}
-						</Text>
-					</XStack>
-					<XStack items="center" gap={10}>
-						<Ionicons
-							name="volume-low"
-							size={18}
-							color="rgba(255,255,255,0.8)"
-						/>
-						<TapBar value={volume} onChange={handleChangeVolume} />
-						<Ionicons
-							name="volume-high"
-							size={18}
-							color="rgba(255,255,255,0.8)"
-						/>
-					</XStack>
-
-					<XStack gap={12} mt={2}>
+				<YStack
+					px={25}
+					paddingVertical={40}
+					style={{ backgroundColor: controlsBackground }}>
+					<XStack items="center" justify="space-between">
 						<Button
-							height={54}
-							rounded={18}
-							backgroundColor="rgba(0,0,0,0.28)"
-							borderWidth={1}
-							borderColor="rgba(255,255,255,0.18)"
-							icon={<Ionicons name="time-outline" size={18} color="white" />}
+							width={48}
+							height={48}
+							rounded={24}
+							padding={0}
+							backgroundColor={playButtons}
+							pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
+							icon={
+								sleepSelected ? undefined : (
+									<Ionicons name="moon" size={28} color={iconColor} />
+								)
+							}
 							onPress={() => setSleepOpen(true)}>
-							<Text color="white" fontWeight="800">
-								{sleepMinutes} min
-							</Text>
+							{sleepSelected ? (
+								<Text
+									style={{ color: iconColor }}
+									fontSize={12}
+									fontWeight="800">
+									{sleepMinutes}m
+								</Text>
+							) : null}
 						</Button>
-						<Button
-							flex={1}
-							height={54}
-							rounded={18}
-							backgroundColor={isDark ? "$accent" : "$primary"}
-							pressStyle={{
-								backgroundColor: isDark ? "$accentHover" : "$primaryHover",
-							}}
-							icon={<Ionicons name="leaf" size={18} color="white" />}
-							onPress={() => router.push("/(menu)/home")}>
-							<Text color="white" fontWeight="900">
-								Cambiar ambiente
-							</Text>
-						</Button>
-					</XStack>
 
-					{/* <XStack
-						height={62}
-						backgroundColor="rgba(0,0,0,0.35)"
-						borderWidth={1}
-						borderColor="rgba(255,255,255,0.14)"
-						rounded={22}
-						px={22}
-						items="center"
-						justify="space-between">
-						<Ionicons name="home" size={22} color="rgba(255,255,255,0.7)" />
-						<Ionicons name="leaf" size={22} color="rgba(255,255,255,0.7)" />
-						<YStack
-							width={44}
-							height={44}
-							rounded={22}
-							backgroundColor="rgba(255,255,255,0.16)"
-							borderWidth={1}
-							borderColor="rgba(255,255,255,0.18)"
-							justify="center"
-							items="center">
-							<Ionicons name="moon" size={22} color="white" />
-						</YStack>
-						<Ionicons name="person" size={22} color="rgba(255,255,255,0.7)" />
-					</XStack> */}
+						<Button
+							width={80}
+							height={80}
+							rounded={43}
+							padding={0}
+							backgroundColor="transparent"
+							borderWidth={4}
+							borderColor={playButtons}
+							pressStyle={{ backgroundColor: "rgba(255,255,255,0.10)" }}
+							icon={
+								<Ionicons
+									name={playerState.isPlaying ? "pause" : "play"}
+									size={40}
+									color={playButtons}
+								/>
+							}
+							onPress={handleTogglePlay}
+						/>
+
+						<Button
+							width={48}
+							height={48}
+							rounded={24}
+							padding={0}
+							backgroundColor={playButtons}
+							pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
+							icon={<Ionicons name="leaf" size={28} color={iconColor} />}
+							onPress={() => router.push("/(menu)/home")}
+						/>
+					</XStack>
 				</YStack>
 
 				<SleepTimerModal
 					open={sleepOpen}
 					minutes={sleepMinutes}
-					onChangeMinutes={setSleepMinutes}
+					onChangeMinutes={(minutes) => {
+						setSleepMinutes(minutes);
+						setSleepSelected(true);
+					}}
+					onConfirm={() => setSleepSelected(true)}
 					onClose={() => setSleepOpen(false)}
 				/>
 			</YStack>
