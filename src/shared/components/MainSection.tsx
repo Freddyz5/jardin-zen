@@ -25,7 +25,7 @@ export default function MainSection({
 			<LinearGradient
 				colors={
 					theme === "dark"
-						? ["#202123", "#363134ff", "#202123"]
+						? ["#232022", "#363134ff", "#232022"]
 						: ["#F7F3F5", "#e2d7e2ff", "#F7F3F5"]
 				}
 				start={{ x: 0.5, y: 0 }}

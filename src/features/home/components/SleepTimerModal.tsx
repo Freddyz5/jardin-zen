@@ -12,6 +12,7 @@ interface SleepTimerModalProps {
 	open: boolean;
 	minutes: SleepMinutes;
 	onChangeMinutes: (minutes: SleepMinutes) => void;
+	onConfirm?: (minutes: SleepMinutes) => void;
 	onClose: () => void;
 }
 
@@ -19,6 +20,7 @@ export function SleepTimerModal({
 	open,
 	minutes,
 	onChangeMinutes,
+	onConfirm,
 	onClose,
 }: SleepTimerModalProps) {
 	const theme = useThemeStore((state: ThemeState) => state.theme);
@@ -35,19 +37,20 @@ export function SleepTimerModal({
 
 	const fadeOutAndStop = async () => {
 		try {
+			const baseVolume = audioPlayer.getVolume();
 			const steps = 14;
 			const totalMs = 7000;
 			const stepMs = Math.floor(totalMs / steps);
 
 			for (let i = 0; i <= steps; i += 1) {
-				const volume = 1 - i / steps;
+				const volume = baseVolume * (1 - i / steps);
 				await audioPlayer.setVolume(volume);
 				await new Promise((resolve) => setTimeout(resolve, stepMs));
 			}
 
 			await audioPlayer.stop();
 			await audioPlayer.unload();
-			await audioPlayer.setVolume(1);
+			await audioPlayer.setVolume(baseVolume);
 		} catch {}
 	};
 
@@ -188,6 +191,7 @@ export function SleepTimerModal({
 						}}
 						onPress={() => {
 							startSleepTimer(minutes);
+							onConfirm?.(minutes);
 							onClose();
 						}}>
 						<Text color="white" fontSize={16} fontWeight="800">
