@@ -1,5 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { Moon } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import { Modal, Pressable, TextInput } from "react-native";
 import { audioPlayer } from "src/lib/audio/audio-player";
@@ -28,6 +28,7 @@ export function SleepTimerModal({
 	const theme = useThemeStore((state: ThemeState) => state.theme);
 	const isDark = theme === "dark";
 	const t = useTheme();
+	const MoonIcon = Moon as any;
 	const presetMinutes = [5, 10, 15, 20, 30] as const;
 	const [customOpen, setCustomOpen] = useState(false);
 	const [customText, setCustomText] = useState("");
@@ -105,7 +106,7 @@ export function SleepTimerModal({
 							borderColor="$text"
 							justify="center"
 							items="center">
-							<Ionicons name="moon" size={24} color={t.text.val} />
+							<MoonIcon size={24} color={t.text.val} />
 						</YStack>
 						<Text fontSize={22} fontWeight="800" color="$text" text="center">
 							Temporizador de Sueño

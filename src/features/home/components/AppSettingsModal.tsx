@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import Constants from "expo-constants";
+import { Moon, Settings, Sun } from "lucide-react-native";
 import { Modal, Pressable } from "react-native";
 import { ThemeState, useThemeStore } from "src/shared/store/theme.store";
 import { Button, Text, XStack, YStack, useTheme } from "tamagui";
@@ -18,6 +18,9 @@ export default function AppSettingsModal({
 	const setTheme = useThemeStore((state: ThemeState) => state.setTheme);
 	const isDark = theme === "dark";
 	const t = useTheme();
+	const SettingsIcon = Settings as any;
+	const SunIcon = Sun as any;
+	const MoonIcon = Moon as any;
 	const appName = Constants.expoConfig?.name ?? "Jardín Zen";
 	const appVersion = Constants.expoConfig?.version ?? "1.0.0";
 	const year = "2026";
@@ -72,7 +75,7 @@ export default function AppSettingsModal({
 							borderColor="$text"
 							justify="center"
 							items="center">
-							<Ionicons name="settings" size={24} color={t.text.val} />
+							<SettingsIcon size={24} color={t.text.val} />
 						</YStack>
 						<Text fontSize={22} fontWeight="800" color="$text" text="center">
 							Configuración
@@ -101,12 +104,9 @@ export default function AppSettingsModal({
 									borderColor={theme === "light" ? "$primary" : "$textMuted"}
 									onPress={() => setTheme("light")}>
 									<XStack items="center" gap={8}>
-										<Ionicons
-											name="sunny"
+										<SunIcon
 											size={18}
-											color={
-												theme === "light" ? t.primary.val : t.textMuted.val
-											}
+											color={theme === "light" ? t.primary.val : t.textMuted.val}
 										/>
 										<Text
 											fontSize={14}
@@ -125,8 +125,7 @@ export default function AppSettingsModal({
 									borderColor={theme === "dark" ? "$primary" : "$textMuted"}
 									onPress={() => setTheme("dark")}>
 									<XStack items="center" gap={8}>
-										<Ionicons
-											name="moon"
+										<MoonIcon
 											size={18}
 											color={theme === "dark" ? t.primary.val : t.textMuted.val}
 										/>

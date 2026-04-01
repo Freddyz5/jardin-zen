@@ -1,5 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { ChevronLeft, Heart, Leaf, Moon, Pause, Play } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,6 +22,12 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 	const theme = useThemeStore((state: ThemeState) => state.theme);
 	const isDark = theme === "dark";
 	const t = useTheme();
+	const ChevronLeftIcon = ChevronLeft as any;
+	const HeartIcon = Heart as any;
+	const MoonIcon = Moon as any;
+	const PauseIcon = Pause as any;
+	const PlayIcon = Play as any;
+	const LeafIcon = Leaf as any;
 
 	const sound = useMemo(
 		() => sounds.find((s) => s.key === soundKey),
@@ -157,8 +163,8 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 					right: -2,
 					top: -2,
 					bottom: -2,
-					filter: "blur(12px)",
 				}}
+				blurRadius={8}
 				resizeMode="cover"
 			/>
 			{/* <BlurView
@@ -175,7 +181,7 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 						padding={0}
 						backgroundColor="transparent"
 						pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
-						icon={<Ionicons name="chevron-back" size={30} color={iconColor} />}
+						icon={<ChevronLeftIcon size={30} color={iconColor} />}
 						onPress={handleBack}
 					/>
 					<XStack items="center" gap={6}>
@@ -187,10 +193,10 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 							backgroundColor="transparent"
 							pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
 							icon={
-								<Ionicons
-									name={liked ? "heart" : "heart-outline"}
+								<HeartIcon
 									size={30}
 									color={iconColor}
+									fill={liked ? iconColor : "transparent"}
 								/>
 							}
 							onPress={() => setLiked((v) => !v)}
@@ -280,7 +286,7 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 								pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
 								icon={
 									sleepSelected ? undefined : (
-										<Ionicons name="moon" size={28} color={iconColor} />
+										<MoonIcon size={28} color={iconColor} />
 									)
 								}
 								onPress={() => setSleepOpen(true)}>
@@ -305,11 +311,11 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 							borderColor={playButtons}
 							pressStyle={{ backgroundColor: "rgba(255,255,255,0.10)" }}
 							icon={
-								<Ionicons
-									name={playerState.isPlaying ? "pause" : "play"}
-									size={40}
-									color={playButtons}
-								/>
+								playerState.isPlaying ? (
+									<PauseIcon size={40} color={playButtons} />
+								) : (
+									<PlayIcon size={40} color={playButtons} />
+								)
 							}
 							onPress={handleTogglePlay}
 						/>
@@ -321,7 +327,7 @@ export default function PlayerScreen({ soundKey }: PlayerScreenProps) {
 							padding={0}
 							backgroundColor={playButtons}
 							pressStyle={{ backgroundColor: "rgba(255,255,255,0.14)" }}
-							icon={<Ionicons name="leaf" size={28} color={iconColor} />}
+							icon={<LeafIcon size={28} color={iconColor} />}
 							onPress={() => router.push("/(menu)/home")}
 						/>
 					</XStack>
