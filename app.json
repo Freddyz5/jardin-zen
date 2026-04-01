@@ -24,7 +24,8 @@
         "backgroundColor": "#F7F3F5"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.freddyz5.jardinzen"
     },
     "web": {
       "output": "static",
@@ -49,6 +50,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b493dee5-b5c4-448a-9286-11f043ea1f8c"
+      }
     }
   }
 }
