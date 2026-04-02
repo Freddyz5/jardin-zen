@@ -1,5 +1,5 @@
-import WelcomeScreen from "@/src/features/welcome";
+import { Redirect } from "expo-router";
 
-export default function Welcome() {
-	return <WelcomeScreen />;
+export default function Index() {
+	return <Redirect href="/(auth)/welcome" />;
 }
