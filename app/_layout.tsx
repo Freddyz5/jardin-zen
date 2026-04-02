@@ -1,5 +1,4 @@
-import "@tamagui/native/setup-zeego";
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { TamaguiProvider, Theme } from "tamagui";
@@ -7,21 +6,18 @@ import { useThemeStore } from "../src/shared/store/theme.store";
 import config from "../tamagui.config";
 
 export default function RootLayout() {
-	const theme = useThemeStore((state) => state.theme);
+	const theme = useThemeStore((state) => state.theme) ?? "dark";
 
 	return (
 		<SafeAreaProvider>
-			<TamaguiProvider config={config} defaultTheme="dark">
+			<TamaguiProvider config={config} defaultTheme={theme}>
 				<Theme name={theme}>
 					<StatusBar
 						style={theme === "dark" ? "light" : "dark"}
 						translucent
 						backgroundColor="transparent"
 					/>
-					<Stack screenOptions={{ headerShown: false }}>
-						<Stack.Screen name="(auth)" />
-						<Stack.Screen name="(menu)" />
-					</Stack>
+					<Slot />
 				</Theme>
 			</TamaguiProvider>
 		</SafeAreaProvider>
