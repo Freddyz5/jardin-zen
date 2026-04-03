@@ -5,23 +5,28 @@ Un proyecto base moderno de React Native + Expo con una arquitectura limpia y es
 ## Tecnologías del Proyecto
 
 ### Core
+
 - **Expo SDK 54** - Framework para desarrollar aplicaciones React Native
 - **React Native 0.81** - Framework de desarrollo móvil
 - **TypeScript** - Tipado estático para JavaScript
 
 ### Navegación
+
 - **Expo Router** - Sistema de navegación basado en archivos
 - **React Navigation** - Librería de navegación (dependencia de Expo Router)
 
 ### Estado Global
+
 - **Zustand** - Gestión de estado global simple y minimalista
 
 ### UI y Estilos
+
 - **React Native StyleSheet** - Sistema de estilos de React Native
 - **React Native Reanimated** - Animaciones de alto rendimiento
 - **React Native SVG** - Soporte para gráficos SVG
 
 ### Funcionalidades Nativas
+
 - **Expo AV** - Reproducción de audio y video
 - **Expo Linear Gradient** - Gradientes lineales
 - **Expo Blur** - Efectos de desenfoque
@@ -87,10 +92,13 @@ root/
 ## Explicación de Carpetas
 
 ### `app/`
+
 Contiene las rutas de la aplicación usando **Expo Router**. Cada carpeta representa una ruta en la aplicación. Los grupos de rutas (como `(auth)` y `(menu)`) se usan para organizar rutas relacionadas sin afectar la URL.
 
 ### `src/features/`
+
 Contiene código específico de cada feature o módulo del negocio. Cada feature tiene su propia subcarpeta con:
+
 - `components/` - Componentes específicos de la feature
 - `hooks/` - Hooks personalizados de la feature
 - `services/` - Servicios/API de la feature
@@ -99,19 +107,24 @@ Contiene código específico de cada feature o módulo del negocio. Cada feature
 - `utils/` - Utilidades de la feature
 
 ### `src/shared/`
+
 Contiene código que se comparte entre múltiples features:
+
 - `components/ui/` - Componentes UI reutilizables (botones, inputs, etc.)
 - `store/` - Stores globales de Zustand
 - `hooks/` - Hooks globales
 - `services/` - Servicios compartidos (API, storage, etc.)
 
 ### `src/lib/`
+
 Contiene configuraciones de librerías externas:
+
 - `tamagui/` - Configuración y temas de Tamagui
 - `audio/` - Wrapper para Expo AV
 - `navigation/` - Utilidades de navegación
 
 ### `assets/`
+
 Recursos estáticos como imágenes, sonidos y fuentes.
 
 ---
@@ -119,7 +132,8 @@ Recursos estáticos como imágenes, sonidos y fuentes.
 ## Cómo Correr el Proyecto
 
 ### Requisitos Previos
-- Node.js 18+ 
+
+- Node.js 18+
 - Bun (gestor de paquetes recomendado) o npm
 - Expo CLI
 
@@ -150,16 +164,63 @@ bun ios
 
 # Ejecutar en Web
 bun web
+
+# Lint
+bun lint
+
+# Reset del proyecto (limpia y deja el template listo)
+bun reset-project
 ```
 
-### Construcción
+### Scripts disponibles
+
+Los scripts se ejecutan con `bun <script>` .
+
+| Script                       | ¿Para qué sirve?                                                                                             |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `start`                      | Levanta el servidor de desarrollo de Expo (Metro)                                                            |
+| `web`                        | Levanta el proyecto en modo web                                                                              |
+| `android`                    | Compila y ejecuta la app en Android (proyecto nativo)                                                        |
+| `ios`                        | Compila y ejecuta la app en iOS (proyecto nativo)                                                            |
+| `lint`                       | Ejecuta el linter usando la configuración de Expo                                                            |
+| `reset-project`              | Resetea/limpia el proyecto usando `scripts/reset-project.js`                                                 |
+| `prebuild:android`           | Genera/actualiza la carpeta nativa `android/` desde config de Expo (limpia antes)                            |
+| `generate:apk:android:debug` | Genera un APK debug local con Gradle (`android/app/build/outputs/apk/debug`)                                 |
+| `generate:apk:android`       | Genera un APK release local con Gradle (`android/app/build/outputs/apk/release`)                             |
+| `generate:aab:android`       | Genera un AAB release local con Gradle (`android/app/build/outputs/bundle/release`)                          |
+| `generate:apk:android:eas`   | Lanza un build de Android en EAS con el perfil `preview`                                                     |
+| `generate:aab:android:eas`   | Lanza un build de Android en EAS con el perfil `production`                                                  |
+| `prebuild:ios`               | Genera/actualiza la carpeta nativa `ios/` desde config de Expo (limpia antes)                                |
+| `generate:apk:ios:debug`     | Intenta generar un artefacto debug desde `ios/` usando Gradle (solo si tu `ios/` tiene un proyecto Gradle)   |
+| `generate:apk:ios`           | Intenta generar un artefacto release desde `ios/` usando Gradle (solo si tu `ios/` tiene un proyecto Gradle) |
+| `generate:aab:ios`           | Intenta generar un bundle release desde `ios/` usando Gradle (solo si tu `ios/` tiene un proyecto Gradle)    |
+| `generate:apk:ios:eas`       | Lanza un build de iOS en EAS con el perfil `preview`                                                         |
+| `generate:aab:ios:eas`       | Lanza un build de iOS en EAS con el perfil `production`                                                      |
+
+Notas:
+
+- Para usar los scripts de Gradle de Android necesitas haber generado `android/` (por ejemplo con `bun prebuild:android`) y tener el toolchain de Android configurado.
+- Los builds de iOS suelen hacerse con Xcode o con EAS. Los scripts `generate:*:ios:eas` producen artefactos de iOS en EAS, aunque el nombre del script diga `apk/aab`.
+- Si usas los scripts `generate:*:ios` (sin `:eas`) asegúrate de que tu carpeta `ios/` realmente soporte Gradle; en proyectos Expo/RN típicos no aplica.
 
 ```bash
-# Generar APK de desarrollo (Android)
-bun expo run:android
+# Prebuild Android (genera carpeta nativa)
+bun prebuild:android
 
-# Generar bundle de producción
-npx expo export
+# APK debug (Android)
+bun generate:apk:android:debug
+
+# AAB release (Android)
+bun generate:aab:android
+
+# Build en EAS (Android)
+bun generate:apk:android:eas
+
+# Prebuild iOS (genera carpeta nativa)
+bun prebuild:ios
+
+# Build en EAS (iOS)
+bun generate:apk:ios:eas
 ```
 
 ---
@@ -178,8 +239,8 @@ En `src/features/mi-feature/types/index.ts`:
 
 ```typescript
 export interface MiEntidad {
-  id: string;
-  nombre: string;
+	id: string;
+	nombre: string;
 }
 ```
 
@@ -188,18 +249,18 @@ export interface MiEntidad {
 En `src/features/mi-feature/store/mi-feature.store.ts`:
 
 ```typescript
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface MiFeatureState {
-  entidades: MiEntidad[];
-  cargarEntidades: () => Promise<void>;
+	entidades: MiEntidad[];
+	cargarEntidades: () => Promise<void>;
 }
 
 export const useMiFeatureStore = create<MiFeatureState>((set) => ({
-  entidades: [],
-  cargarEntidades: async () => {
-    // Lógica para cargar entidades
-  },
+	entidades: [],
+	cargarEntidades: async () => {
+		// Lógica para cargar entidades
+	},
 }));
 ```
 
@@ -256,16 +317,17 @@ Expo Router es un sistema de navegación basado en archivos. Cada archivo en la 
 
 ### Estructura de Rutas
 
-| Archivo | Ruta |
-|---------|------|
-| `app/index.tsx` | `/` |
-| `app/(auth)/login.tsx` | `/login` |
-| `app/(menu)/home/index.tsx` | `/home` |
+| Archivo                       | Ruta           |
+| ----------------------------- | -------------- |
+| `app/index.tsx`               | `/`            |
+| `app/(auth)/login.tsx`        | `/login`       |
+| `app/(menu)/home/index.tsx`   | `/home`        |
 | `app/(menu)/detalle/[id].tsx` | `/detalle/:id` |
 
 ### Grupos de Rutas
 
 Los paréntesis en los nombres de carpeta (como `(auth)`) crean grupos de rutas. Esto permite:
+
 - Organizar código relacionado
 - Compartir layouts entre rutas
 - No afectar la URL
@@ -290,18 +352,18 @@ export default function MiLayout() {
 ### Navegación
 
 ```typescript
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
 
 const router = useRouter();
 
 // Navegar a una ruta
-router.push('/home');
+router.push("/home");
 
 // Navegar hacia atrás
 router.back();
 
 // Reemplazar la ruta actual
-router.replace('/login');
+router.replace("/login");
 ```
 
 ---
@@ -313,18 +375,19 @@ Zustand es una librería de gestión de estado simple y minimalista.
 ### Crear un Store
 
 ```typescript
-import { create } from 'zustand';
+import { create } from "zustand";
 
 interface AppState {
-  tema: 'light' | 'dark';
-  toggleTema: () => void;
+	tema: "light" | "dark";
+	toggleTema: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
-  tema: 'light',
-  toggleTema: () => set((state) => ({ 
-    tema: state.tema === 'light' ? 'dark' : 'light' 
-  })),
+	tema: "light",
+	toggleTema: () =>
+		set((state) => ({
+			tema: state.tema === "light" ? "dark" : "light",
+		})),
 }));
 ```
 
@@ -420,6 +483,7 @@ chore: mantenimiento
 ```
 
 Ejemplo:
+
 ```
 feat(auth): agregar validación de email
 fix(login): corregir navegación después del login
